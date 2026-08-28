@@ -1,0 +1,12 @@
+.vscode/**
+.github/**
+tests/**
+src/**
+scripts/**
+coverage/**
+dist/**
+.envdoctorrc
+*.map
+eslint.config.mjs
+tsconfig.json
+.prettierrc.json

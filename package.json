@@ -1,0 +1,364 @@
+{
+  "name": "env-doctor",
+  "displayName": "Env Doctor",
+  "description": "Find missing, unused, inconsistent, and exposed environment variables before they break your application.",
+  "version": "1.0.0",
+  "publisher": "your-publisher-id",
+  "license": "MIT",
+  "icon": "resources/icon.png",
+  "banner": {
+    "color": "#1f2937",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other",
+    "Linters",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "environment variables",
+    "env",
+    "dotenv",
+    ".env",
+    "missing environment variables",
+    "unused environment variables",
+    "env validation",
+    "secret detection",
+    "configuration",
+    "developer tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/env-doctor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/env-doctor/issues"
+  },
+  "homepage": "https://github.com/your-org/env-doctor#readme",
+  "main": "./bundle/extension.js",
+  "bin": {
+    "env-doctor": "./bundle/cli.js"
+  },
+  "files": [
+    "bundle",
+    "resources",
+    "README.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:envDoctor.explorer",
+    "onCommand:envDoctor.scanProject",
+    "onCommand:envDoctor.showReport"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "envDoctor.scanProject",
+        "title": "Env Doctor: Scan Project",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.showReport",
+        "title": "Env Doctor: Show Report",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.generateExample",
+        "title": "Env Doctor: Generate .env.example",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.compareEnvironments",
+        "title": "Env Doctor: Compare Environments",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.findMissing",
+        "title": "Env Doctor: Find Missing Variables",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.findUnused",
+        "title": "Env Doctor: Find Unused Variables",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.scanSecrets",
+        "title": "Env Doctor: Scan for Secrets",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.validate",
+        "title": "Env Doctor: Validate Configuration",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.refresh",
+        "title": "Env Doctor: Refresh",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.openIssue",
+        "title": "Open Issue Location",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.ignoreVariable",
+        "title": "Ignore Variable",
+        "category": "Env Doctor"
+      },
+      {
+        "command": "envDoctor.ignoreFile",
+        "title": "Ignore File",
+        "category": "Env Doctor"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "envDoctor",
+          "title": "Env Doctor",
+          "icon": "resources/activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "envDoctor": [
+        {
+          "id": "envDoctor.explorer",
+          "name": "Env Doctor",
+          "icon": "resources/activity.svg",
+          "contextualTitle": "Env Doctor"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "envDoctor.refresh",
+          "when": "view == envDoctor.explorer",
+          "group": "navigation@1"
+        },
+        {
+          "command": "envDoctor.showReport",
+          "when": "view == envDoctor.explorer",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "envDoctor.openIssue",
+          "when": "view == envDoctor.explorer && viewItem =~ /envDoctor\\.issue/",
+          "group": "inline@1"
+        },
+        {
+          "command": "envDoctor.ignoreVariable",
+          "when": "view == envDoctor.explorer && viewItem == envDoctor.issue.variable",
+          "group": "envDoctor@1"
+        },
+        {
+          "command": "envDoctor.ignoreFile",
+          "when": "view == envDoctor.explorer && viewItem =~ /envDoctor\\.issue/",
+          "group": "envDoctor@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Env Doctor",
+      "properties": {
+        "envDoctor.autoScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan the workspace after Env Doctor activates."
+        },
+        "envDoctor.scanOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Rescan changed files after save using the incremental cache."
+        },
+        "envDoctor.scanOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Scan when a workspace is opened."
+        },
+        "envDoctor.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/.git/**",
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/.next/**",
+            "**/coverage/**",
+            "**/vendor/**",
+            "**/.venv/**",
+            "**/venv/**",
+            "**/generated/**"
+          ],
+          "description": "Glob patterns excluded from scanning."
+        },
+        "envDoctor.envFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".env",
+            ".env.local",
+            ".env.development",
+            ".env.development.local",
+            ".env.production",
+            ".env.production.local",
+            ".env.test",
+            ".env.test.local",
+            ".env.example",
+            ".env.sample"
+          ],
+          "description": "Environment file names to detect."
+        },
+        "envDoctor.compareEnvFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".env.local",
+            ".env.production",
+            ".env.example"
+          ],
+          "description": "Environment files to compare when available."
+        },
+        "envDoctor.missingSeverity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "warning"
+        },
+        "envDoctor.unusedSeverity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "information"
+        },
+        "envDoctor.secretSeverity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "error"
+        },
+        "envDoctor.inconsistentSeverity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "information"
+        },
+        "envDoctor.validationSeverity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "warning"
+        },
+        "envDoctor.parseSeverity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "off"
+          ],
+          "default": "warning"
+        },
+        "envDoctor.scanGitTrackedEnvFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Locally check Git-tracked env files for credential-like values. File contents never leave the machine."
+        },
+        "envDoctor.showStatusBar": {
+          "type": "boolean",
+          "default": true
+        },
+        "envDoctor.preserveNonSecretDefaults": {
+          "type": "boolean",
+          "default": false,
+          "description": "Preserve obvious non-secret defaults when generating .env.example."
+        },
+        "envDoctor.examplePlaceholders": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Optional placeholders used when generating .env.example, keyed by variable name."
+        },
+        "envDoctor.maxFileSizeKb": {
+          "type": "number",
+          "default": 1024,
+          "minimum": 16,
+          "maximum": 10240,
+          "description": "Skip source files larger than this size."
+        },
+        "envDoctor.maxFiles": {
+          "type": "number",
+          "default": 30000,
+          "minimum": 100,
+          "maximum": 200000,
+          "description": "Safety limit for files considered in a single workspace scan."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "compile": "tsc -p tsconfig.json && node scripts/bundle.mjs",
+    "watch": "node scripts/watch.mjs",
+    "lint": "tsc -p tsconfig.json --noEmit && eslint src scripts && node scripts/security-lint.mjs",
+    "format": "prettier --check src tests scripts package.json tsconfig.json eslint.config.mjs",
+    "format:write": "prettier --write src tests scripts package.json tsconfig.json eslint.config.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "test:coverage": "node scripts/run-tests.mjs --coverage",
+    "test:performance": "node scripts/run-tests.mjs --performance",
+    "package": "npm run clean && npm run compile && npm run test && npm run lint && npm run format && node scripts/package-vsix.mjs"
+  },
+  "dependencies": {
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.10.7",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.9.1",
+    "prettier": "^3.9.6",
+    "typescript-eslint": "^8.68.0"
+  }
+}
